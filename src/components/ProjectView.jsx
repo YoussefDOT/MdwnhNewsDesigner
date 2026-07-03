@@ -46,9 +46,10 @@ export default function ProjectView({ projectId, onBack }) {
       </header>
 
       {tab === 'write' ? (
-        <WritingTab projectId={projectId} project={project} onSaved={() => setTab('design')} />
+        <WritingTab projectId={projectId} project={project}
+          onSaved={() => setTab('design')} onGoDesign={() => setTab('design')} />
       ) : (
-        <DesignTab projectId={projectId} project={project} />
+        <DesignTab projectId={projectId} project={project} onLeave={onBack} />
       )}
     </div>
   )

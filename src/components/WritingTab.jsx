@@ -4,13 +4,15 @@ import { ACCENTS, MAX_SECTIONS, orderedSections, syncDesignWithWriting, uid } fr
 import { I } from '../icons.jsx'
 import { ToastCtx } from '../App.jsx'
 
-export default function WritingTab({ projectId, project, onSaved }) {
+export default function WritingTab({ projectId, project, onSaved, onGoDesign }) {
   const toast = useContext(ToastCtx)
   const [sections, setSections] = useState(() => orderedSections(project.writing))
   const [errors, setErrors] = useState({})
   const [saving, setSaving] = useState(false)
   const [confirmDel, setConfirmDel] = useState(null) // section id pending delete
+  const [confirmSave, setConfirmSave] = useState(false) // overwrite confirm when already saved
   const focusedRef = useRef(null) // "sid:title" | "sid:body" | null
+  const alreadySaved = !!project.writing?.saved
 
   // merge live edits from teammates, but never clobber the field being typed in
   useEffect(() => {
@@ -140,12 +142,33 @@ export default function WritingTab({ projectId, project, onSaved }) {
               <I.plus /> إضافة مقطع ({sections.length}/{MAX_SECTIONS})
             </button>
           )}
-          <button className="btn btn-primary btn-save" disabled={saving} onClick={save}>
+          <button className="btn btn-primary btn-save" disabled={saving}
+            onClick={() => (alreadySaved ? setConfirmSave(true) : save())}>
             {saving ? <span className="spinner spinner-s" /> : <I.check />}
-            حفظ وفتح التصميم
+            {alreadySaved ? 'تعديل النص' : 'حفظ وفتح التصميم'}
           </button>
+          {alreadySaved && (
+            <button className="btn btn-ghost btn-godesign" onClick={onGoDesign}>
+              <I.palette /> الذهاب للتصميم
+            </button>
+          )}
         </div>
       </div>
+
+      {confirmSave && (
+        <div className="modal-back" onClick={() => setConfirmSave(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3 className="modal-title">تحديث النصوص؟</h3>
+            <p className="modal-sub">سيُستبدل نص التصميم الحالي بما كتبتموه الآن. تنسيقكم ومواضع العناصر تبقى كما هي، ويتغيّر النص فقط.</p>
+            <div className="modal-row">
+              <button className="btn btn-primary" onClick={() => { setConfirmSave(false); save() }}>
+                <I.check /> نعم، حدّث
+              </button>
+              <button className="btn btn-ghost" onClick={() => setConfirmSave(false)}>تراجع</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {confirmDel && (
         <div className="modal-back" onClick={() => setConfirmDel(null)}>

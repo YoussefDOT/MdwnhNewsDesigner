@@ -849,4 +849,75 @@ img { -webkit-user-drag: none; }
   .write { padding: 22px 14px 70px; }
   .sheet { padding: 16px 14px 18px; }
   .modal { padding: 18px; }
+  .gate-box { width: 52px; height: 62px; font-size: 1.6rem; }
+  .gate-card { padding: 30px 22px; }
+}
+
+/* ============ password gate ============ */
+.gate {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.gate-el {
+  position: absolute;
+  opacity: 0.14;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  animation: floaty 7s ease-in-out infinite alternate;
+}
+.gate-el-a { width: 70px; height: 70px; top: 10%; left: 8%; }
+.gate-el-b { width: 90px; height: 90px; bottom: 12%; right: 10%; animation-delay: 1.2s; }
+.gate-el-c { width: 60px; height: 60px; top: 14%; right: 14%; animation-delay: 2.4s; }
+
+.gate-card {
+  position: relative;
+  z-index: 1;
+  width: min(420px, 100%);
+  background: var(--card);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  box-shadow: 8px 8px 0 rgba(38, 38, 38, 0.85);
+  padding: 40px 34px;
+  text-align: center;
+  animation: pop-in 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.gate-logo { height: 56px; margin-bottom: 10px; animation: floaty 5s ease-in-out infinite alternate; }
+.gate-title { font-size: clamp(1.6rem, 4vw, 2.1rem); font-weight: 800; margin: 4px 0 6px; }
+.gate-sub { margin: 0 0 26px; font-weight: 600; opacity: 0.7; font-size: 1rem; }
+
+.gate-boxes {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+.gate-boxes.gate-shake { animation: shake 0.4s ease; }
+
+.gate-box {
+  width: 60px;
+  height: 70px;
+  font-family: inherit;
+  font-size: 1.9rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  outline: none;
+  box-shadow: 0 4px 0 var(--ink);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  -webkit-text-security: disc;
+}
+.gate-box:focus {
+  border-color: var(--blue);
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--blue);
 }

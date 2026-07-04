@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ProjectChooser from './components/ProjectChooser.jsx'
 import ProjectView from './components/ProjectView.jsx'
+import Gate, { isUnlocked } from './components/Gate.jsx'
 
 const parseHash = () => {
   const m = location.hash.match(/^#\/p\/([\w-]+)/)
@@ -12,6 +13,7 @@ export const ToastCtx = React.createContext(() => {})
 export default function App() {
   const [projectId, setProjectId] = useState(parseHash)
   const [toast, setToast] = useState(null)
+  const [unlocked, setUnlocked] = useState(isUnlocked)
 
   useEffect(() => {
     const onHash = () => setProjectId(parseHash())
@@ -27,6 +29,10 @@ export default function App() {
     const t = setTimeout(() => setToast(null), 2600)
     return () => clearTimeout(t)
   }, [toast])
+
+  if (!unlocked) {
+    return <Gate onUnlock={() => setUnlocked(true)} />
+  }
 
   return (
     <ToastCtx.Provider value={showToast}>

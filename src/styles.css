@@ -454,7 +454,8 @@ img { -webkit-user-drag: none; }
 .selbar-wrap {
   padding: 10px 14px 0;
   position: sticky;
-  top: 0;
+  /* stick under the sticky topbar, whose height changes when it wraps on mobile */
+  top: var(--topbar-h, 0px);
   z-index: 55;
   background: var(--paper);
 }

@@ -1029,10 +1029,10 @@ function TextTools({ el, design, allFonts, editing, onEdit, applyStyle, patch, s
       {/* size */}
       <div className="size-ctl">
         <button className="icon-btn" onPointerDown={noFocus}
-          onClick={() => patch({ fs: clamp((el.fs || 34) - 3, 12, 260) })}>−</button>
+          onClick={() => patch({ fs: clamp((el.fs || 34) - 3, 12, 260), fsManual: true })}>−</button>
         <b>{Math.round(el.fs || 34)}</b>
         <button className="icon-btn" onPointerDown={noFocus}
-          onClick={() => patch({ fs: clamp((el.fs || 34) + 3, 12, 260) })}>+</button>
+          onClick={() => patch({ fs: clamp((el.fs || 34) + 3, 12, 260), fsManual: true })}>+</button>
       </div>
 
       <button className={`icon-btn ${el.bold ? 'icon-on' : ''}`} title="عريض" onPointerDown={noFocus}

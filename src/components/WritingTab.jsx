@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { pathRef, update, get } from '../firebase.js'
-import { ACCENTS, MAX_SECTIONS, orderedSections, syncDesignWithWriting, uid } from '../model.js'
+import { ACCENTS, orderedSections, syncDesignWithWriting, uid } from '../model.js'
 import { I } from '../icons.jsx'
 import { ToastCtx } from '../App.jsx'
 
@@ -42,7 +42,6 @@ export default function WritingTab({ projectId, project, onSaved, onGoDesign }) 
   }
 
   const addSection = () => {
-    if (sections.length >= MAX_SECTIONS) return
     const s = { id: 's_' + uid(), title: '', body: '', order: sections.length }
     setSections((c) => [...c, s])
     update(pathRef(`projects/${projectId}/writing/sections/${s.id}`), {
@@ -137,11 +136,9 @@ export default function WritingTab({ projectId, project, onSaved, onGoDesign }) 
         ))}
 
         <div className="write-actions">
-          {sections.length < MAX_SECTIONS && (
-            <button className="btn btn-ghost btn-add" onClick={addSection}>
-              <I.plus /> إضافة مقطع ({sections.length}/{MAX_SECTIONS})
-            </button>
-          )}
+          <button className="btn btn-ghost btn-add" onClick={addSection}>
+            <I.plus /> إضافة مقطع ({sections.length})
+          </button>
           <button className="btn btn-primary btn-save" disabled={saving}
             onClick={() => (alreadySaved ? setConfirmSave(true) : save())}>
             {saving ? <span className="spinner spinner-s" /> : <I.check />}

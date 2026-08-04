@@ -28,9 +28,9 @@ export const SWATCHES = [
   '#8E44AD', '#E91E8C',
 ]
 
-export const MAX_SECTIONS = 4
-
 export const uid = () => Math.random().toString(36).slice(2, 9)
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 
 // ---------- html helpers ----------
 export const esc = (s = '') =>
@@ -48,18 +48,20 @@ export const sanitize = (html = '') =>
 
 // ---------- default layout ----------
 // Sections flow newspaper-style (RTL): first fills the right column, then left.
-// Returns { [sid]: { head:{x,y,w,fs}, body:{x,y,w,h,fs}, paper:{x,y,w,h,rot} } }
+// Any number of sections is allowed — past 4 the columns just gain rows and the
+// type/photo sizes shrink proportionally so everything still fits inside AREA.
+// Returns { [sid]: { head:{x,y,w,fs}, body:{x,y,w,fs}, paper:{x,y,w,h,rot} } }
 export function defaultLayout(sectionIds, hasPaper = {}) {
   const n = sectionIds.length
   const W = AREA.R - AREA.L
   const H = AREA.B - AREA.T
   const GX = 56
   const GY = 44
+  const baseRow = (H - GY) / 2 // reference cell height (the classic 4-section grid)
 
   // cell list in order: [x, y, w, h]
   let cells = []
   const colW = (W - GX) / 2
-  const rowH = (H - GY) / 2
   const rightX = AREA.L + colW + GX // right column (RTL first)
   if (n === 1) {
     cells = [[AREA.L + W * 0.1, AREA.T + 30, W * 0.8, H - 60]]
@@ -70,37 +72,42 @@ export function defaultLayout(sectionIds, hasPaper = {}) {
     ]
   } else if (n === 3) {
     cells = [
-      [rightX, AREA.T, colW, rowH],
-      [rightX, AREA.T + rowH + GY, colW, rowH],
+      [rightX, AREA.T, colW, baseRow],
+      [rightX, AREA.T + baseRow + GY, colW, baseRow],
       [AREA.L, AREA.T, colW, H],
     ]
   } else {
-    cells = [
-      [rightX, AREA.T, colW, rowH],
-      [rightX, AREA.T + rowH + GY, colW, rowH],
-      [AREA.L, AREA.T, colW, rowH],
-      [AREA.L, AREA.T + rowH + GY, colW, rowH],
-    ]
+    // two columns; the right one (RTL first) takes the extra section when n is odd
+    const rightN = Math.ceil(n / 2)
+    const stack = (x, count) => {
+      const gy = count > 3 ? 26 : GY
+      const h = (H - gy * (count - 1)) / count
+      return Array.from({ length: count }, (_, r) => [x, AREA.T + r * (h + gy), colW, h])
+    }
+    cells = [...stack(rightX, rightN), ...stack(AREA.L, n - rightN)]
   }
 
   const out = {}
+  const rots = [-3.5, 2.8, -2.2, 3.6]
   sectionIds.forEach((sid, i) => {
     const [cx, cy, cw, ch] = cells[Math.min(i, cells.length - 1)]
-    const tall = ch > rowH * 1.4
+    // k = how much taller/shorter this cell is than the 4-section reference cell
+    const k = clamp(ch / baseRow, 0.42, 2)
     const withPaper = hasPaper[sid] !== false
-    const pw = tall ? 400 : 320
-    const ph = tall ? 470 : 360
-    const headH = tall ? 110 : 96
-    const gap = 36
+    const headFs = Math.round(clamp(52 * k, 26, 60))
+    const bodyFs = Math.round(clamp(33 * k, 17, 36))
+    const headH = Math.round(headFs * 1.85)
+    const gap = Math.round(clamp(36 * k, 16, 36))
+    const pw = Math.round(Math.min(clamp(320 * k, 170, 400), cw * 0.42))
+    const ph = Math.round(Math.min(clamp(360 * k, 190, 470), Math.max(120, ch - headH - 8)))
     const bodyW = withPaper ? cw - pw - gap : cw
-    const rots = [-3.5, 2.8, -2.2, 3.6]
     out[sid] = {
-      head: { x: cx, y: cy, w: cw, fs: tall ? 60 : 52 },
+      head: { x: cx, y: cy, w: cw, fs: headFs },
       body: {
         x: withPaper ? cx + pw + gap : cx,
         y: cy + headH,
         w: bodyW,
-        fs: tall ? 36 : 33,
+        fs: bodyFs,
       },
       paper: {
         x: cx,
@@ -175,8 +182,10 @@ export function syncDesignWithWriting(designIn, sections) {
       }
     } else {
       if (prev.title !== s.title) d.elements[hid].html = textToHtml(s.title)
-      if (d.elements[hid].auto && countChanged)
+      if (d.elements[hid].auto && countChanged) {
         Object.assign(d.elements[hid], { x: L.head.x, y: L.head.y, w: L.head.w })
+        if (!d.elements[hid].fsManual) d.elements[hid].fs = L.head.fs
+      }
     }
 
     // body
@@ -189,8 +198,10 @@ export function syncDesignWithWriting(designIn, sections) {
       }
     } else {
       if (prev.body !== s.body) d.elements[bid].html = textToHtml(s.body)
-      if (d.elements[bid].auto && countChanged)
+      if (d.elements[bid].auto && countChanged) {
         Object.assign(d.elements[bid], { x: L.body.x, y: L.body.y, w: L.body.w })
+        if (!d.elements[bid].fsManual) d.elements[bid].fs = L.body.fs
+      }
     }
 
     // taped paper (unless user deleted it)

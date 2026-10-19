@@ -1,15 +1,21 @@
 // Font catalogue + on-demand Google Fonts loader.
 //
-// Brand fonts come first (Baloo = default, Vazirmatn second), each with real
+// Brand fonts come first (Norsal = default, Vazirmatn second), each with real
 // weight axes. After them a separator, then the whole Google Fonts library.
+// Norsal is not on Google Fonts: it is self-hosted (@font-face in styles.css),
+// so `local: true` keeps the loader from asking Google for it.
 
 export const BRAND_FONTS = [
-  { id: 'Baloo Bhaijaan 2', name: 'بالو بهيجان (الأساسي)', weights: [400, 500, 600, 700, 800], brand: true },
+  { id: 'Norsal', name: 'نورسال (الأساسي)', weights: [100, 200, 300, 400, 500, 600, 700, 800, 900], brand: true, local: true },
   { id: 'Vazirmatn', name: 'وزيرمتن', weights: [100, 200, 300, 400, 500, 600, 700, 800, 900], brand: true },
 ]
 
 // A few hand-picked Arabic faces surfaced near the top for convenience.
+// Baloo Bhaijaan 2 was the brand font before Norsal: saved projects can still
+// name it (pageFont, element fonts, inline runs), so it stays here and in the
+// Google link in index.html.
 export const ARABIC_FONTS = [
+  { id: 'Baloo Bhaijaan 2', name: 'بالو بهيجان (الخط السابق)', weights: [400, 500, 600, 700, 800] },
   { id: 'Cairo', name: 'القاهرة', weights: [200, 300, 400, 500, 600, 700, 800, 900] },
   { id: 'Tajawal', name: 'تجوّل', weights: [200, 300, 400, 500, 700, 800, 900] },
   { id: 'Almarai', name: 'المراعي', weights: [300, 400, 700, 800] },
@@ -100,6 +106,7 @@ export function loadFont(id) {
   loaded.add(id)
   const fam = id.replace(/ /g, '+')
   const spec = brandById[id]
+  if (spec?.local) return // self-hosted, already declared in styles.css
   const wght = spec ? `:wght@${spec.weights.join(';')}` : ''
   const link = document.createElement('link')
   link.rel = 'stylesheet'
@@ -107,4 +114,4 @@ export function loadFont(id) {
   document.head.appendChild(link)
 }
 
-export const DEFAULT_FONT = 'Baloo Bhaijaan 2'
+export const DEFAULT_FONT = 'Norsal'

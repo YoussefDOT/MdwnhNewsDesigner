@@ -9,8 +9,14 @@ Writing tab and a Design tab.
 - Vite + React 18, no router (hash-based: `#/` chooser, `#/p/<id>` project)
 - Firebase Realtime Database for all collaboration/storage — no backend server
 - `html-to-image` for full-quality PNG export
-- Arabic-first UI, RTL, font **Baloo Bhaijaan 2** (+ 5 alternates), brand
-  accents `#E54B2A #F3C02B #41B9A6 #0B6EB9` on background `#f7f5ec`
+- Arabic-first UI, RTL, font **Norsal** (self-hosted variable woff2 at
+  `public/assets/fonts/norsal.woff2`, weights 100 to 900, `@font-face` in
+  `src/styles.css`; not on Google Fonts, so `loadFont` skips it and
+  `buildFontEmbedCSS` inlines it for PNG export) + alternates from Google.
+  **Baloo Bhaijaan 2** was the brand font before Norsal: saved projects can
+  name it, so it stays in the Google link in `index.html` and in the picker as
+  a legacy font. Brand accents `#E54B2A #F3C02B #41B9A6 #0B6EB9`, plus orange
+  `#F29A2E` and purple `#713AB8` (Oct 2026 rebrand), on background `#f7f5ec`
 
 Run: `npm run dev` (port 5188, see `.claude/launch.json`). Build: `npm run build`.
 

@@ -1,4 +1,13 @@
 /* ============ base ============ */
+/* Norsal: the brand font, self-hosted, one variable file for every weight */
+@font-face {
+  font-family: 'Norsal';
+  src: url('/assets/fonts/norsal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --paper: #f7f5ec;
   --ink: #262626;
@@ -7,8 +16,10 @@
   --yellow: #f3c02b;
   --teal: #41b9a6;
   --blue: #0b6eb9;
+  --orange: #f29a2e;
+  --purple: #713ab8;
   --card: #ffffff;
-  --font: 'Baloo Bhaijaan 2', 'Cairo', sans-serif;
+  --font: 'Norsal', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -339,7 +350,7 @@ img { -webkit-user-drag: none; }
 .sheet-body {
   font-family: inherit;
   width: 100%;
-  font-size: 1.12rem; font-weight: 500; line-height: 1.9;
+  font-size: 1.12rem; font-weight: 400; line-height: 1.9;
   border: 2.5px solid transparent;
   border-radius: 14px;
   background: var(--paper);
@@ -591,7 +602,7 @@ img { -webkit-user-drag: none; }
   position: absolute; top: 0; left: 0;
   transform-origin: top left;
   direction: rtl;
-  font-family: var(--page-font, 'Baloo Bhaijaan 2');
+  font-family: var(--page-font, 'Norsal');
   --page-ink: #201c17;
   background: #b9906b;
   border-radius: 6px;

@@ -13,7 +13,8 @@ export const BGS = [
 ]
 
 export const FONTS = [
-  { id: 'Baloo Bhaijaan 2', name: 'بالو (الأساسي)' },
+  { id: 'Norsal', name: 'نورسال (الأساسي)' },
+  { id: 'Baloo Bhaijaan 2', name: 'بالو (الخط السابق)' },
   { id: 'Cairo', name: 'القاهرة' },
   { id: 'Amiri', name: 'أميري' },
   { id: 'Reem Kufi', name: 'ريم كوفي' },
@@ -21,11 +22,11 @@ export const FONTS = [
   { id: 'Lalezar', name: 'لاله زار' },
 ]
 
-export const ACCENTS = ['#E54B2A', '#F3C02B', '#41B9A6', '#0B6EB9']
+export const ACCENTS = ['#E54B2A', '#F3C02B', '#41B9A6', '#0B6EB9', '#F29A2E', '#713AB8']
 
 export const SWATCHES = [
   '#262626', '#ffffff', '#E54B2A', '#F3C02B', '#41B9A6', '#0B6EB9',
-  '#8E44AD', '#E91E8C',
+  '#F29A2E', '#713AB8', '#8E44AD', '#E91E8C',
 ]
 
 export const uid = () => Math.random().toString(36).slice(2, 9)
@@ -125,7 +126,7 @@ export function defaultLayout(sectionIds, hasPaper = {}) {
 export const defaultDesign = () => ({
   bg: 1,
   shadow: 0.45,
-  pageFont: 'Baloo Bhaijaan 2',
+  pageFont: 'Norsal',
   elements: {},
   meta: {},
   deletedPapers: {},

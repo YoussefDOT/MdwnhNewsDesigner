@@ -41,10 +41,18 @@ const blobToDataUrl = (blob) =>
     fr.readAsDataURL(blob)
   })
 
+// Norsal is self-hosted, so it is not in any Google stylesheet: inline it too,
+// or the exported PNG falls back to a system font.
+const NORSAL_URL = './assets/fonts/norsal.woff2'
+
 async function buildFontEmbedCSS() {
   if (fontEmbedCache != null) return fontEmbedCache
   const links = [...document.querySelectorAll('link[href*="fonts.googleapis.com/css2"]')]
   let css = ''
+  try {
+    const data = await blobToDataUrl(await (await fetch(NORSAL_URL)).blob())
+    css += `@font-face{font-family:'Norsal';src:url(${data}) format('woff2');font-weight:100 900;font-style:normal;}`
+  } catch { /* export still runs, in a fallback face */ }
   for (const link of links) {
     try { css += '\n' + (await (await fetch(link.href)).text()) } catch { /* skip */ }
   }
@@ -846,7 +854,7 @@ function TextEl({ id, el, selected, editing, nodeRef, onDown, onHandle, onDbl, o
         zIndex: Math.round((el.z || 0) * 10) + (selected ? 1 : 0),
         fontFamily: el.font ? `'${el.font}', sans-serif` : undefined,
         color: el.color || undefined,
-        fontWeight: el.weight || (el.bold ? 800 : 500),
+        fontWeight: el.weight || (el.bold ? 800 : 400),
         fontStyle: el.italic ? 'italic' : undefined,
       }}
       onPointerDown={onDown} onDoubleClick={onDbl}>
